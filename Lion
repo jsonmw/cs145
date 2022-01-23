@@ -1,45 +1,52 @@
 import java.awt.*;
+import java.util.Random;
 
-public class Giant extends Critter {
+public class Lion extends Critter{
 
+    private Random random;
     private int turnCount;
+    private Color currentColor;
 
-    public Giant() {
-        this.turnCount = 0;
+    public Lion() {
+        random = new Random();
+        turnCount = 0;
+        currentColor = determineColor();
     }
 
     public Color getColor() {
-        return Color.GRAY;
+        if((turnCount-1) % 3 == 0) {
+            currentColor = determineColor();
+        }
+        turnCount++;
+        return currentColor;
+    }
+
+    private Color determineColor() {
+        int color = random.nextInt(3);
+
+        if(color == 1) {
+            return Color.RED;
+        } else if (color == 2) {
+            return Color.GREEN;
+        } else {
+            return Color.BLUE;
+        }
     }
 
     public String toString() {
-
-        int currentWord = (turnCount-1) / 6;
-        if (currentWord > 3) {
-            turnCount = 0;
-            currentWord = 0;
-        }
-
-        turnCount++;
-
-        if(currentWord == 0) {
-            return "fee";
-        } else if(currentWord == 1) {
-            return "fie";
-        } else if(currentWord == 2) {
-            return "foe";
-        } else {
-            return "fum";
-        }
+        return "L";
     }
 
     public Action getMove(CritterInfo info) {
+
         if(info.getFront() == Neighbor.OTHER) {
             return Action.INFECT;
-        } else if (info.getFront() == Neighbor.EMPTY) {
-            return Action.HOP;
-        } else {
+        } else if (info.getFront() == Neighbor.WALL || info.getRight() == Neighbor.WALL) {
+            return Action.LEFT;
+        } else if(info.getFront() == Neighbor.SAME) {
             return Action.RIGHT;
+        } else {
+            return Action.HOP;
         }
     }
 }
