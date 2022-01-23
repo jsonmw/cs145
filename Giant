@@ -1,0 +1,45 @@
+import java.awt.*;
+
+public class Giant extends Critter {
+
+    private int turnCount;
+
+    public Giant() {
+        this.turnCount = 0;
+    }
+
+    public Color getColor() {
+        return Color.GRAY;
+    }
+
+    public String toString() {
+
+        int currentWord = (turnCount-1) / 6;
+        if (currentWord > 3) {
+            turnCount = 0;
+            currentWord = 0;
+        }
+
+        turnCount++;
+
+        if(currentWord == 0) {
+            return "fee";
+        } else if(currentWord == 1) {
+            return "fie";
+        } else if(currentWord == 2) {
+            return "foe";
+        } else {
+            return "fum";
+        }
+    }
+
+    public Action getMove(CritterInfo info) {
+        if(info.getFront() == Neighbor.OTHER) {
+            return Action.INFECT;
+        } else if (info.getFront() == Neighbor.EMPTY) {
+            return Action.HOP;
+        } else {
+            return Action.RIGHT;
+        }
+    }
+}
