@@ -1,45 +1,72 @@
+// Alex Bohnson, Jason Wild, Joel Fletcher, Steven Sipes
+// 1/28/22
+// CS 145
+// LAB 2 - Critters
+
 import java.awt.*;
+
+//  This class is used to create Giant critters, and controls their behavior.
 
 public class Giant extends Critter {
 
     private int turnCount;
+    private String appearance;
+
+//  Constructs a Giant critter at base state.
 
     public Giant() {
         this.turnCount = 0;
+        this.appearance = "fee";
     }
+
+//  Returns the gray color of the giant.
 
     public Color getColor() {
         return Color.GRAY;
     }
 
+//  Returns the current appearance as a String.
+
     public String toString() {
-
-        int currentWord = (turnCount-1) / 6;
-        if (currentWord > 3) {
-            turnCount = 0;
-            currentWord = 0;
-        }
-
-        turnCount++;
-
-        if(currentWord == 0) {
-            return "fee";
-        } else if(currentWord == 1) {
-            return "fie";
-        } else if(currentWord == 2) {
-            return "foe";
-        } else {
-            return "fum";
-        }
+        return appearance;
     }
 
+//  Given the state of the CritterInfo object, determines what the Giant's next move
+//  will be. Increments the turn count and calls updateAppearance to check current state.
+
     public Action getMove(CritterInfo info) {
+        turnCount++;
+        updateAppearance();
+
         if(info.getFront() == Neighbor.OTHER) {
             return Action.INFECT;
         } else if (info.getFront() == Neighbor.EMPTY) {
             return Action.HOP;
         } else {
             return Action.RIGHT;
+        }
+    }
+
+//  Updates the appearance of the Giant every six turns as necessary.
+
+    private void updateAppearance() {
+
+        // Cycles through 4 different word states before resetting based on turn count.
+
+        int currentWord = turnCount / 6;
+        if (currentWord > 3) {
+            turnCount = 0;
+            currentWord = 0;
+        }
+
+        if(currentWord == 0) {
+            appearance = "fee";
+        } else if(currentWord == 1) {
+            appearance = "fie";
+        } else if(currentWord == 2) {
+            appearance =  "foe";
+        } else {
+            appearance = "fum";
         }
     }
 }
