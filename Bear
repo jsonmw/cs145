@@ -1,14 +1,28 @@
+// Alex Bohnson, Jason Wild, Joel Fletcher, Steven Sipes
+// 1/28/22
+// CS 145
+// LAB 2 - Critters
+
 import java.awt.*;
+
+//  This class is used to create Bear critters, and controls their behavior.
 
 public class Bear extends Critter {
 
     private int turnCount;
+    private String appearance;
     private boolean polar;
+
+//  Takes polar input and sets the fields to their beginning values.
 
     public Bear(Boolean polar) {
         this.polar = polar;
         this.turnCount =0;
+        this.appearance = "/";
     }
+
+//  Returns the color of the Bear's graphical representation based on polarness of
+//  the bear.
 
     public Color getColor() {
         if(polar) {
@@ -18,22 +32,35 @@ public class Bear extends Critter {
         }
     }
 
+//  Produces the graphical representation of the bear, alternating between turns.
+
     public String toString() {
-        turnCount++;
-        if(turnCount % 2 == 0) {
-            return "\\";
-        } else {
-            return "/";
-        }
+        return appearance;
     }
 
+//  Given the state of the CritterInfo object, determines what the Bear's next move
+//  will be. Increments the turn count and calls updateAppearance.
+
     public Action getMove(CritterInfo info) {
+        turnCount++;
+        updateAppearance();
+
         if(info.getFront() == Neighbor.OTHER) {
             return Action.INFECT;
         } else if (info.getFront() == Neighbor.EMPTY) {
             return Action.HOP;
         } else {
             return Action.LEFT;
+        }
+    }
+
+//  Updates the appearance of the bear every other turn.
+
+    private void updateAppearance() {
+        if(turnCount % 2 == 1) {
+            appearance = "\\";
+        } else {
+            appearance = "/";
         }
     }
 }
