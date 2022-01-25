@@ -1,65 +1,85 @@
+// Alex Bohnson, Jason Wild, Joel Fletcher, Steven Sipes
+// 1/28/22
+// CS 145
+// LAB 2 - Critters
+
 import java.awt.*;
 
 public class Orca extends Critter{
 
-    private int direction;
-    private boolean firstTurn;
+//  This class is used to create Orca critters, and controls their behavior.
+
+    private String appearance;
+    private Color currentColor;
+    private int redCount;
+
+//  Constructs Orca critter and sets first round initial appearance.
 
     public Orca() {
-        firstTurn = true;
+        this.appearance = ">O>";
+        this.currentColor = Color.BLACK;
     }
+
+//  Returns the dark gray color of the Orca.
 
     public Color getColor() {
-        return Color.BLACK;
+        return currentColor;
     }
+
+//   Returns the current appearance of the Orca.
 
     public String toString() {
-
-        if(firstTurn) {
-            firstTurn = false;
-            return ">O>";
-        }
-
-        if(direction == 1) {
-            return "/O\\";
-        } else if(direction == 2) {
-            return ">O>";
-        } else if(direction == 3) {
-            return "\\O/";
-        } else {
-            return "<O<";
-        }
-
+        return appearance;
     }
 
+//  Given the state of the CritterInfo object, determines what the Orca's next move
+//  will be. Ensures the appearance is updated appropriately. If the Orca infects
+//  another critter, its color changes to red for 3 turns (messy eater).
+
     public Action getMove(CritterInfo info) {
-        direction = computeDirection(info);
+        redCount--;
+        updateAppearance(info);
 
-
+        // Orca can infect in all directions, and turns red if it attacks a Critter
+        // (whether it wins or not)
         if(info.getFront() == Neighbor.OTHER || info.getRight() == Neighbor.OTHER ||
                 info.getLeft() == Neighbor.OTHER || info.getBack() == Neighbor.OTHER) {
+            currentColor = Color.RED;
+            redCount = 2;
             return Action.INFECT;
-        } else if (info.getFront() == Neighbor.WALL || info.getLeft() == Neighbor.WALL) {
+
+        // Orca turns around if it runs into wall
+        } else if (info.getFront() == Neighbor.WALL || info.getRight() == Neighbor.WALL) {
             return Action.LEFT;
-        } else if(info.getFront() == Neighbor.SAME) {
+        } else if (info.getLeft() == Neighbor.WALL) {
             return Action.RIGHT;
+
+        // Orca turns right or left if it runs into another Orca, otherwise hops
+        } else if(info.getFront() == Neighbor.SAME && info.getRight() != Neighbor.SAME) {
+            return Action.RIGHT;
+        } else if(info.getFront() == Neighbor.SAME && info.getLeft() != Neighbor.SAME) {
+            return Action.LEFT;
         } else {
             return Action.HOP;
         }
-
     }
 
-    private int computeDirection(CritterInfo info) {
+//  Updates the appearance of the Orca to correspond to its current direction and resets
+//  color to black if enough turns have passed.
+
+    private void updateAppearance(CritterInfo info) {
+        if(redCount < 0) {
+            currentColor = Color.BLACK;
+        }
+
         if(info.getDirection() == Direction.NORTH) {
-            return 1;
+            appearance = "/O\\";
         } else if(info.getDirection() == Direction.EAST) {
-            return 2;
+            appearance = ">O>";
         } else if(info.getDirection() == Direction.SOUTH) {
-            return 3;
+            appearance = "\\O/";
         } else {
-            return 4;
+            appearance = "<O<";
         }
     }
-
-
 }
