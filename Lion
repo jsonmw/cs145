@@ -1,43 +1,55 @@
+// Alex Bohnson, Jason Wild, Joel Fletcher, Steven Sipes
+// 1/28/22
+// CS 145
+// LAB 2 - Critters
+
 import java.awt.*;
 import java.util.Random;
+
+//  This class is used to create Lion critters, and controls their behavior.
 
 public class Lion extends Critter{
 
     private Random random;
     private int turnCount;
+    private int colorNumber;
     private Color currentColor;
+    private String appearance;
+
+//  Constructs a new Lion critter, instantiates a Random object, and sets the Lion's
+//  state to its initial values.
 
     public Lion() {
-        random = new Random();
-        turnCount = 0;
-        currentColor = determineColor();
+        this.random = new Random();
+        this.turnCount = 0;
+        this.appearance = "L";
+
+        // sets initial color
+        updateAppearance();
     }
 
+//  Returns the current color of the Lion.
+
     public Color getColor() {
-        if((turnCount-1) % 3 == 0) {
-            currentColor = determineColor();
-        }
-        turnCount++;
         return currentColor;
     }
 
-    private Color determineColor() {
-        int color = random.nextInt(3);
-
-        if(color == 1) {
-            return Color.RED;
-        } else if (color == 2) {
-            return Color.GREEN;
-        } else {
-            return Color.BLUE;
-        }
-    }
+//  Returns appearance of Lion critter. (Used appearance variable even though
+//  it's always "L" just to be consistent with other critter classes, and to
+//  allow for potential future updates to Lion behavior).
 
     public String toString() {
-        return "L";
+        return appearance;
     }
 
+//  Given the state of the CritterInfo object, determines what the Lion's next move
+//  will be. Increments the turn count and updates color every 3 turns.
+
     public Action getMove(CritterInfo info) {
+        turnCount++;
+        if(turnCount % 3 == 0) {
+            updateAppearance();
+        }
 
         if(info.getFront() == Neighbor.OTHER) {
             return Action.INFECT;
@@ -47,6 +59,20 @@ public class Lion extends Critter{
             return Action.RIGHT;
         } else {
             return Action.HOP;
+        }
+    }
+
+//  Randomly sets the current color to red, green, or blue.
+
+    private void updateAppearance() {
+        colorNumber = random.nextInt(3);
+
+        if(colorNumber == 0) {
+            currentColor = Color.RED;
+        } else if (colorNumber == 1) {
+            currentColor = Color.GREEN;
+        } else if (colorNumber == 2) {
+            currentColor = Color.BLUE;
         }
     }
 }
