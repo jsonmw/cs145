@@ -17,7 +17,7 @@ public class Orca extends Critter{
 
     public Orca() {
         this.appearance = ">O>";
-        this.currentColor = Color.BLACK;
+        this.currentColor = Color.CYAN;
     }
 
 //  Returns the dark gray color of the Orca.
@@ -32,45 +32,50 @@ public class Orca extends Critter{
         return appearance;
     }
 
-//  Given the state of the CritterInfo object, determines what the Orca's next move
-//  will be. Ensures the appearance is updated appropriately. If the Orca infects
-//  another critter, its color changes to red for 3 turns (messy eater).
+//      Given the state of the CritterInfo object, determines what the Orca's next move will be. The Orca
+//      infects any other critter in front of it. Otherwise, it checks to see if the critter is facing it.
+//      If so, it will hop away, otherwise attempt to infect it the next turn. When the Orca is nearby a
+//      different critter it "surfaces" by going from CYAN to BLACK. Orcas always win. Go WCC Orcas!
 
     public Action getMove(CritterInfo info) {
-        redCount--;
         updateAppearance(info);
 
-        // Orca can infect in all directions, and turns red if it attacks a Critter
-        // (whether it wins or not)
-        if(info.getFront() == Neighbor.OTHER || info.getRight() == Neighbor.OTHER ||
-                info.getLeft() == Neighbor.OTHER || info.getBack() == Neighbor.OTHER) {
-            currentColor = Color.RED;
-            redCount = 2;
+        if (info.getFront() == Neighbor.OTHER) {
+            currentColor = Color.BLACK;
             return Action.INFECT;
-
-        // Orca turns around if it runs into wall
-        } else if (info.getFront() == Neighbor.WALL || info.getRight() == Neighbor.WALL) {
-            return Action.LEFT;
-        } else if (info.getLeft() == Neighbor.WALL) {
-            return Action.RIGHT;
-
-        // Orca turns right or left if it runs into another Orca, otherwise hops
-        } else if(info.getFront() == Neighbor.SAME && info.getRight() != Neighbor.SAME) {
-            return Action.RIGHT;
-        } else if(info.getFront() == Neighbor.SAME && info.getLeft() != Neighbor.SAME) {
-            return Action.LEFT;
-        } else {
+        } else if(info.getLeft() ==  Neighbor.OTHER ){
+            currentColor = Color.BLACK;
+            if( info.getFront()  == Neighbor.EMPTY && info.getLeftDirection() == Direction.WEST){
+                return Action.HOP;
+            } else {
+                return Action.LEFT;
+            }
+        } else if(info.getRight() ==  Neighbor.OTHER ){//cheks if critter to left is facing us, if yes, try to hop away otherwise turn to try to infect it next turn
+            currentColor = Color.BLACK;
+            if (info.getFront()  == Neighbor.EMPTY && info.getRightDirection() == Direction.EAST){
+                return Action.HOP;
+            } else {
+                return Action.RIGHT;
+            }
+        } else if(info.getBack() ==  Neighbor.OTHER ){//cheks if critter to left is facing us, if yes, try to turn left away otherwise turn to try to infect it next turn
+            currentColor = Color.BLACK;
+            if( info.getFront()  == Neighbor.EMPTY && info.getBackDirection() == Direction.NORTH){
+                return Action.HOP;
+            } else {
+                return Action.LEFT;
+            }
+        } else if (info.getFront() == Neighbor.EMPTY){
             return Action.HOP;
+        } else {
+            return Action.LEFT;
         }
     }
 
-//  Updates the appearance of the Orca to correspond to its current direction and resets
-//  color to black if enough turns have passed.
+//      Updates the appearance of the Orca to correspond to its current direction and resets
+//      color to CYAN.
 
     private void updateAppearance(CritterInfo info) {
-        if(redCount < 0) {
-            currentColor = Color.BLACK;
-        }
+        currentColor = Color.CYAN;
 
         if(info.getDirection() == Direction.NORTH) {
             appearance = "/O\\";
