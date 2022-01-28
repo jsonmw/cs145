@@ -50,20 +50,13 @@ public class Giant extends Critter {
 //  Updates the appearance of the Giant every six turns as necessary.
 
     private void updateAppearance() {
+        int currentWord = turnCount % 24;
 
-        // Cycles through 4 different word states before resetting based on turn count.
-
-        int currentWord = turnCount / 6;
-        if (currentWord > 3) {
-            turnCount = 0;
-            currentWord = 0;
-        }
-
-        if(currentWord == 0) {
+        if(currentWord < 6) {
             appearance = "fee";
-        } else if(currentWord == 1) {
+        } else if(currentWord < 12) {
             appearance = "fie";
-        } else if(currentWord == 2) {
+        } else if(currentWord < 18) {
             appearance =  "foe";
         } else {
             appearance = "fum";
