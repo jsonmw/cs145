@@ -1,8 +1,5 @@
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+import java.io.*;
 
 public class WordSearch {
 
@@ -51,7 +48,7 @@ public class WordSearch {
 
     public void save()
             throws FileNotFoundException  {
-        
+
         Scanner input = new Scanner(System.in);
         System.out.print("Enter a name for your Word Search file: ");
         String fileName = input.nextLine();
@@ -133,18 +130,14 @@ public class WordSearch {
 //      and a direction. Will return a boolean if it's successful or not.
 
     private boolean getPosition (String word){
-        int x, y;
         int tries = MAX_TRIES;
 
         while(tries > 0) {
-            workingPos[2] = random.nextInt(3);
-//            x = random.nextInt(size - word.length() + 1);
-//            y = random.nextInt(size - word.length() + 1);
-            workingPos[0]= random.nextInt(size - word.length() + 1);
-            workingPos[1] = random.nextInt(size - word.length() + 1);
+            workingPos[0]= random.nextInt(size - word.length() + 1);  // y
+            workingPos[1] = random.nextInt(size - word.length() + 1); // x
+            workingPos[2] = random.nextInt(3);                        // direction (0: horizontal, 1: vertical, 2: diagonal)
+
             if(checkSpaces(word)) {
-//                workingPos[0] = y;
-//                workingPos[1] = x;
                 return true;
             }
             tries--;
