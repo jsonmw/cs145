@@ -1,0 +1,133 @@
+// Alex Bohnson, Jason Wild, Joel Fletcher, Steven Sipes
+// //22
+// CS 145
+// LAB 3 - Letter Inventory
+
+public class LetterInventory {
+
+//    This class accepts a word as input and creates a letter inventory object based on
+//    the characters contained in the String, allowing you to store, access and manipulate
+//    certain information.
+
+    private static final int ALPHABET = 26;
+    private int[] counters;
+    private int size;
+
+//    Constructs a new LetterInventory object from the given word.
+
+    public LetterInventory (String data) {
+        counters = getCounts(data.toLowerCase());
+        size = getSize();
+    }
+
+//    Returns the number of times the given letter appears. Will produce an error
+//    if a non-alphabetic character is passed to it.
+
+    public int get (char letter) {
+        if(!Character.isLetter(letter)) {
+            throw new IllegalArgumentException();
+        }
+        return counters[Character.toLowerCase(letter) - 'a'];
+    }
+
+//    Sets the value of the given letter's count to the given integer. Will produce
+//    an error if a non-alphabetic character is passed to it.
+
+    public void set (char letter, int value) {
+        if(!Character.isLetter(letter)) {
+            throw new IllegalArgumentException();
+        }
+        counters[Character.toLowerCase(letter) - 'a'] = value;
+        size = getSize();
+    }
+
+//    Returns the size, or sum, of all character counts in the inventory. Throws
+//    NullPointerException if LetterInventory is null.
+
+    public int size ()
+        throws NullPointerException {
+        return size;
+    }
+
+//    Returns whether the letter inventory is empty or not.
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+//    Returns a String representation of the LetterInventory.
+
+    public String toString() {
+        return "[" + counterRevertToString(counters) + "]";
+    }
+
+//    Adds the given LetterInventory's letter counts to the total. Will produce a
+//    NullPointerException if a null LetterInventory object is passed to it.
+
+    public LetterInventory add (LetterInventory other)
+            throws NullPointerException {
+        int[] sum = new int[ALPHABET];
+        for(int i = 0; i < counters.length; i++) {
+            sum[i] = this.counters[i] + other.counters[i];
+        }
+        return new LetterInventory(counterRevertToString(sum));
+    }
+
+//    Subtracts the given LetterInventory's letter counts from the total. Returns null
+//    if the operation creates a negative count. Will produce NullPointerException if
+//    a null LetterInventory object is passed to it.
+
+    public LetterInventory subtract (LetterInventory other)
+            throws NullPointerException {
+        int[] difference = new int[ALPHABET];
+        for(int i = 0; i < counters.length; i++) {
+            difference[i] = this.counters[i] - other.counters[i];
+            if(difference[i] < 0) {
+                difference[i] = 0;
+                return null;
+            }
+        }
+        return new LetterInventory(counterRevertToString(difference));
+    }
+
+//    Returns an array containing the individual characters' appearance counts.
+
+    private int[] getCounts (String word) {
+        int[] array = new int[ALPHABET];
+        char letter;
+        int displacement;
+
+        for(int i = 0; i < word.length(); i++) {
+            if(Character.isLetter(word.charAt(i))) {
+                letter = word.charAt(i);
+                displacement = letter - 'a';
+                array[displacement]++;
+            }
+        }
+        return array;
+    }
+
+//    Returns the total number of letters stored in the inventory.
+
+    private int getSize() {
+        int sum = 0;
+        for(int i : counters) {
+            sum += i;
+        }
+        return sum;
+    }
+
+//    Given an array of integers containing letter appearances, this returns
+//    String containing each letter in the array, however many times it appears,
+//    and in alphabetic order.
+
+    private String counterRevertToString (int[] array) {
+        String output = "";
+        for(int i = 0; i < array.length; i++) {
+            for(int j = 0; j < array[i]; j++) {
+                output += (char) ('a' + i);
+            }
+        }
+        return  output;
+    }
+}
