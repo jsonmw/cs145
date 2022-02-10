@@ -1,0 +1,86 @@
+import java.util.*;
+
+public class HangmanManager {
+
+    private TreeSet<String> potentialWords;
+    private char[] pattern;
+    private int[] workingPosition;
+    private ArrayList<Character> families;
+    private int remaining;
+
+
+    public HangmanManager(List<String> dictionary, int length, int max) {
+
+        if(length < 1 || max < 0 ) {
+            throw new IllegalArgumentException();
+        }
+
+        this.pattern = new char[length];
+        this.remaining = max;
+        this.potentialWords = new TreeSet<>(dictionary);
+        this.workingPosition = new int[length];
+
+        for(String w : potentialWords) {
+            if(w.length() > length) {
+                potentialWords.remove(w);
+            }
+        }
+
+        for(int i = 0; i < pattern.length; i++ ) {
+            pattern[i] = '-';
+        }
+
+
+    }
+
+    public Set<String> words() {
+        return potentialWords;
+    }
+
+    public int guessesLeft() {
+
+        return remaining;
+    }
+
+    public SortedSet<Character> guesses() {
+
+    }
+
+    public String pattern() {
+        if(potentialWords.isEmpty()) {
+            throw new IllegalStateException();
+        }
+
+        String pattern = "";
+
+        for(char c : this.pattern) {
+            pattern += c;
+        }
+
+        return pattern;
+    }
+
+    public int record(char guess) {
+        for(String s : potentialWords) {
+            if(!s.contains(""+ guess)) {
+                potentialWords.remove(s);
+            }
+        }
+
+    }
+
+
+    private void updatePatterns(char guess) {
+        for(String s : potentialWords) {
+            for(int i = 0; i < s.length(); i++) {
+                if(s.charAt(i) == guess) {
+                    pattern[i] = guess;
+                }
+            }
+        }
+
+    }
+
+
+
+}
