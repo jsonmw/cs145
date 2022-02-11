@@ -2,81 +2,107 @@ import java.util.*;
 
 public class HangmanManager {
 
-    private TreeSet<String> potentialWords;
-    private char[] pattern;
-    private int[] workingPosition;
-    private ArrayList<Character> families;
-    private int remaining;
+//    This program creates and handles a new game of Evil Hangman. Given a dictionary of words,
+//    a word length, and a maximum number of incorrect guesses, it will attempt to make the
+//    most difficult game of hangman possible for the player based on each guess they make.
+
+    private Set<String> potentialWords;
+    private Map<String, ArrayList<String>> patterns;
+    private SortedSet<Character> guesses;
+    private List<Character> families;
+    private int strikes;
+    private String currentPattern;
 
 
+//    Creates a new Hangman game with the given dictionary, word length, and maximum number
+//    of incorrect guesses.
     public HangmanManager(List<String> dictionary, int length, int max) {
 
         if(length < 1 || max < 0 ) {
             throw new IllegalArgumentException();
         }
 
-        this.pattern = new char[length];
-        this.remaining = max;
+        this.patterns = new TreeMap<>();
+        this.guesses = new TreeSet<>();
+        this.strikes = max;
         this.potentialWords = new TreeSet<>(dictionary);
-        this.workingPosition = new int[length];
+        this.currentPattern = "-";
+
+        for(int i = 0; i < length; i++) {
+            currentPattern += " -";
+        }
 
         for(String w : potentialWords) {
-            if(w.length() > length) {
+            if(w.length() != length) {
                 potentialWords.remove(w);
             }
         }
 
-        for(int i = 0; i < pattern.length; i++ ) {
-            pattern[i] = '-';
-        }
-
-
     }
+
+//    returns the list of potential words with respect to the currently made guesses.
 
     public Set<String> words() {
         return potentialWords;
     }
 
+//    returns the number of remaining incorrect guesses.
     public int guessesLeft() {
 
-        return remaining;
+        return strikes;
     }
+
+//    returns the currently guessed letters in alphabetic order.
 
     public SortedSet<Character> guesses() {
 
+        return guesses;
     }
 
+//    returns the current pattern for the user to make their next guess. If the potential
+//    words list pool is empty, throws IllegalStateException.
     public String pattern() {
         if(potentialWords.isEmpty()) {
             throw new IllegalStateException();
         }
 
-        String pattern = "";
 
-        for(char c : this.pattern) {
-            pattern += c;
-        }
-
-        return pattern;
+        return currentPattern;
     }
+
+//    Takes the given character guess and compares it to each key in the patterns map
+//    selecting the key associated family of patterns that has the most possible words.
+//    If the letter occurs in any existing pattern, it will choose the one with the largest
+//    pool of words. If the guessed letter does not occur, it will choose the largest pool
+//    of all remaining patterns. Returns the number of guesses left. If the set of words
+//    is empty or the player has no strikes remaining, will throw an IllegalStateException
+//    and if the player repeats an already guessed character, will throw an IllegalArgumentException.
+
+    //    Keyset to create an iterable set to search for the letter
+    //    Remove keys that no longer are possible
 
     public int record(char guess) {
-        for(String s : potentialWords) {
-            if(!s.contains(""+ guess)) {
-                potentialWords.remove(s);
-            }
+        int success = 0;
+        if(potentialWords.isEmpty() || strikes < 1) {
+            throw new IllegalStateException();
+        } else if (guesses.contains(guess)) {
+            throw new IllegalArgumentException();
         }
 
+        return strikes -= success;
     }
 
+//    Cycles the given character through the given word and returns a pattern to test against
+//    possible word families.
 
-    private void updatePatterns(char guess) {
-        for(String s : potentialWords) {
-            for(int i = 0; i < s.length(); i++) {
-                if(s.charAt(i) == guess) {
-                    pattern[i] = guess;
-                }
-            }
+
+    private void testPattern(char guess) {
+        Iterator<String> word = potentialWords.iterator();
+        String currentWord;
+
+        while(word.hasNext()) {
+            currentWord = word.next();
+
         }
 
     }
