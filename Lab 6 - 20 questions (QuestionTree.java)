@@ -1,0 +1,204 @@
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+
+public class QuestionTree {
+
+//    This program holds the information and behaviors needed to play 20 questions with
+//    a set of questions and answers.
+
+    private QuestionNode root;
+    private int gamesPlayed;
+    private int gamesWon;
+    private UserInterface ui;
+
+    public QuestionTree (UserInterface ui) {
+        if(ui == null) {
+            throw new IllegalArgumentException();
+        }
+        this.gamesPlayed = 0;
+        this.gamesWon = 0;
+        this.ui = ui;
+        this.root = new QuestionNode("computer");
+
+    }
+
+//    Executes one complete game of 20 questions.
+
+    public void play() {
+        //while loop asking yes/no questions and calling correct methods
+        //uses UserInterFace methods for appropriate outputs
+
+        printWholeTree(root, 0);
+        root = play(root);
+        gamesPlayed++;
+//        ui.println("Would your object happen to be " + finalGuess.nodeData + "?");
+//        if (ui.nextBoolean()) {
+//            ui.println("I win!");
+//            gamesWon++;
+//        } else {
+//            finalGuess = loserCityUSAPopulationThisGuy(finalGuess);
+//        }
+    }
+
+    private QuestionNode play(QuestionNode current) {
+        if (current == null) {
+            throw new IllegalArgumentException();
+        }
+
+
+        // debug
+        ui.println("Checking " + current.nodeData);
+        if(current.yes != null) {
+            ui.println("    Current's yes: " + current.yes.nodeData);
+        }
+        if(current.no != null) {
+            ui.println("    Current's no: " + current.no.nodeData);
+        }
+        // end debug
+
+        if (isAnswer(current)) {
+            ui.println("Would your object happen to be " + current.nodeData + "?");
+            if (ui.nextBoolean()) {
+                ui.println("I win!");
+                gamesWon++;
+            } else {
+                current = loserCityUSAPopulationThisGuy(current);
+            }
+        } else {
+
+            ui.print(current.nodeData);
+
+            if (ui.nextBoolean()) {
+                current.yes = play(current.yes);
+            } else {
+                current.no = play(current.no);
+            }
+        }
+
+        return current;
+    }
+
+//    Outputs the current state of the QuestionTree to the given PrintStream object.
+
+    public void save (PrintStream output) {
+        if(output == null) {
+            throw new IllegalArgumentException();
+        }
+        save(output, root);
+        // traverses the current tree and if else to output the contents of each node with
+        // a Q: or A:
+    }
+
+    public void save(PrintStream output, QuestionNode current) {
+
+        if(!isAnswer(current)) {
+            output.println("Q: " + current.nodeData);
+            save(output, current.yes);
+            save(output, current.no);
+        } else {
+            output.println("A: " + current.nodeData);
+        }
+    }
+
+//    Builds the current QuestionTree from the given Scanner object.
+
+    public void load(Scanner input) {
+        if(input == null) {
+            throw new IllegalArgumentException();
+        }
+        List<String> QAList = new ArrayList<>();
+        buildStringList(input, QAList);
+        Iterator<String> itr = QAList.iterator();
+        root = load(itr);
+
+        // load text into an ArrayList of String[]s?
+        // answer = remove ?
+        // if !hasNext QuestionNode list.get(list.size() -1) = new QuestionNode(answer)
+    }
+
+    private QuestionNode load(Iterator<String> QAList) {
+        QuestionNode currentNode = null;
+        if(QAList.hasNext()) {
+
+            String[] currentData = QAList.next().split("[:]");
+
+
+            //debug
+            ui.println("Adding " + currentData[0] + " : " + currentData[1]);
+            //debug
+
+            if(currentData[0].equals("Q")) {
+                currentNode = new QuestionNode((load(QAList)), load(QAList), currentData[1]);
+            } else {
+                currentNode = new QuestionNode(currentData[1]);
+            }
+        }
+
+        return currentNode;
+    }
+
+    private void buildStringList(Scanner input, List<String> QAList) {
+        String currentLine = input.nextLine();
+        QAList.add(currentLine);
+        System.out.println("Adding " + currentLine);
+
+        if(input.hasNextLine()){
+            buildStringList(input, QAList);
+        }
+    }
+
+//    Returns the number of games played.
+
+    public int totalGames() {
+        return gamesPlayed;
+    }
+
+//    Returns the number of games won.
+
+    public int gamesWon() {
+        return gamesWon;
+    }
+
+//    Returns whether the given node represents an answer.
+
+    private boolean isAnswer(QuestionNode node) {
+        if(node == null) {
+            throw new IllegalArgumentException();
+        }
+        return (node.no == null && node.yes == null);
+    }
+
+//    Moves the player to the next node based on the given answer (true = yes, false = no).
+
+    private QuestionNode loserCityUSAPopulationThisGuy(QuestionNode wrongObject) {
+        ui.println("I lose. What is your object? ");
+        QuestionNode correctObject = new QuestionNode(ui.nextLine());
+        ui.println("Type a yes/no question to distinguish your item from " + wrongObject.nodeData + ": ");
+        String question = ui.nextLine();
+        System.out.println("And what is the answer for your object? ");
+        if(ui.nextBoolean()) {
+            return new QuestionNode(correctObject, wrongObject, question);
+        }
+        return new QuestionNode(wrongObject, correctObject, question);
+
+
+    }
+
+    private void printWholeTree(QuestionNode root, int level) {
+        if(root != null) {
+            printWholeTree(root.no, level+1);
+            for(int i = 0; i < level; i++){
+                System.out.print("                    ");
+            }
+            System.out.println(root.nodeData);
+            System.out.println();
+            printWholeTree(root.yes, level +1);
+        }
+    }
+
+
+}
