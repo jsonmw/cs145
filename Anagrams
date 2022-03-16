@@ -1,0 +1,65 @@
+import java.util.*;
+
+public class Anagrams {
+
+    private static final Set<String> dictionary;
+    public Anagrams(Set<String> dictionary) {
+        if(dictionary == null) {
+            throw new IllegalArgumentException();
+        }
+
+        this.dictionary = dictionary;
+    }
+
+    public Set<String> getWords(String phrase) {
+        if(phrase == null) {
+            throw new IllegalArgumentException();
+        }
+        //return a set containing all words from dictionary that can be made using
+        //some or all of the letters in the given phrase, in alphabetical order
+
+        LetterInventory letters = new LetterInventory(phrase);
+        // use the methods in this!!
+
+        Set<String> wordSet = new TreeSet<>();
+        for(String word: dictionary) {
+            wordSet = getWords(wordSet, letters, word);
+        }
+        return wordSet;
+    }
+
+    private Set<String> getWords(Set<String> wordList, LetterInventory phrase, String word) {
+
+            if(!phrase.contains(word) || phrase.size() == 0) {
+                return wordList;
+            } else if(wordList.contains(word) && !phrase.contains(word)) {
+                wordList.remove(word);
+            }
+
+
+
+    }
+
+    public void print(String phrase) {
+        if(phrase == null) {
+            throw new IllegalArgumentException();
+        }
+        // recursive backtracking to find and print all anagrams that can be formed using all
+        // the letters of the given phrase, in the same order
+    }
+
+    public void print(String phrase, int max) {
+        if(phrase == null || max < 0) {
+            throw new IllegalArgumentException();
+        }
+        //recursive backtracking to find and print all anagrams using the letters of the given
+        //phrase and that include at most max words total. If max is 0, print all.
+
+        if(max == 0) {
+
+        } else {
+
+        }
+    }
+}
+
