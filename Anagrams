@@ -1,4 +1,13 @@
+// Jason Wild
+// CS145 Winter 2022
+// Lab 3 - Anagrams
+
+// This took probably 10-12 hours, including watching videos and studying backtracking examples.
+
 import java.util.*;
+
+//    This class can be utilized by a client program to solve for all anagrams of a given
+//    phrase, utilizing a given dictionary.
 
 public class Anagrams {
 
@@ -6,22 +15,28 @@ public class Anagrams {
     private LetterInventory currentLetters;
     private Set<String> currentWordSet;
 
+//    Builds a new Anagrams object with the given dictionary.
+
     public Anagrams(Set<String> dictionary) {
-        if(dictionary == null) {
+        if (dictionary == null) {
             throw new IllegalArgumentException();
         }
         this.dictionary = dictionary;
+        this.currentWordSet = new TreeSet<>();
     }
 
+//    Returns a collection of all possible words that can be built from letters within the
+//    given phrase, if valid.
+
     public Set<String> getWords(String phrase) {
-        if(phrase == null) {
+        if (phrase == null) {
             throw new IllegalArgumentException();
         }
 
         currentLetters = new LetterInventory(phrase);
         Set<String> wordSet = new TreeSet<>();
 
-        for(String word: dictionary) {
+        for (String word : dictionary) {
             if (currentLetters.contains(word)) {
                 wordSet.add(word);
             }
@@ -29,15 +44,20 @@ public class Anagrams {
         return wordSet;
     }
 
+//    Allows the printing of all anagrams for the given phrase with no limit on maximum of total words.
+
     public void print(String phrase) {
-        if(phrase == null) {
+        if (phrase == null) {
             throw new IllegalArgumentException();
         }
         print(phrase, -1);
     }
 
+//    Builds the current inventory of usable letters and sets the list of available words, from the given
+//    phrase, then calls the recursive helper method with the given max number of words.
+
     public void print(String phrase, int max) {
-        if(phrase == null || max == 0) {
+        if (phrase == null || max == 0) {
             throw new IllegalArgumentException();
         }
         currentWordSet = getWords(phrase);
@@ -46,16 +66,19 @@ public class Anagrams {
         print(tries, max);
     }
 
-    private void print (Stack<String> tries, int max) {
-        if(currentLetters.isEmpty()) {
-            System.out.println(tries);;
-        } else if(max != 0) {
-            for(String word : currentWordSet) {
-                if(word.length() <= currentLetters.size() && currentLetters.contains(word)) {
-                    tries.push(word);
+//    Uses the given Stack to build up potential anagram solutions, and prints full solutions of the given
+//    max number of words to the console.
+
+    private void print(Stack<String> tries, int max) {
+        if (currentLetters.isEmpty()) {
+            System.out.println(tries);
+        } else if (max != 0) { // this stops calls if max is reached, but allows "-1" to print all anagrams
+            for (String word : currentWordSet) {
+                if (word.length() <= currentLetters.size() && currentLetters.contains(word)) {
+                    tries.push(word); // choose
                     currentLetters.subtract(word);
-                    print(tries, max - 1);
-                    tries.pop();
+                    print(tries, max - 1); // explore
+                    tries.pop(); // unchoose
                     currentLetters.add(word);
                 }
             }
